@@ -11,9 +11,8 @@ class LocationGrouper
     end
 
     def split_locations_every_5_seconds
-      locations = Location.all
+      locations = Location.all.eager_load(:user)
       splitted = {}
-
       locations.each do |location|
         time = beginnig_of_5seconds(location[:created_at]).iso8601
         splitted[time] ||= []

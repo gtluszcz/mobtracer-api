@@ -1,6 +1,4 @@
 class LocationsController < ApplicationController
-  # before_action :check_params, only: [:create]
-
   def index
     render json: LocationGrouper.every_5_seconds
   end
