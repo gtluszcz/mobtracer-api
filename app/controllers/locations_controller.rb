@@ -4,7 +4,7 @@ class LocationsController < ApplicationController
   end
 
   def create
-    render json: LocationCreator.create(*check_params)
+    render json: LocationCreator.create(*check_params), status: :created
   end
 
   private
