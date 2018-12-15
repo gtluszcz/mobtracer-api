@@ -1,7 +1,7 @@
 class LocationGrouper
   class << self
-    def every_5_seconds
-      split_locations_every_5_seconds
+    def every_5_seconds(locations:)
+      split_locations_every_5_seconds(locations)
     end
 
     private
@@ -10,8 +10,7 @@ class LocationGrouper
       t.change(sec: t.sec - t.sec % 5)
     end
 
-    def split_locations_every_5_seconds
-      locations = Location.all.eager_load(:user)
+    def split_locations_every_5_seconds(locations)
       splitted = {}
       locations.each do |location|
         time = beginnig_of_5seconds(location[:created_at]).iso8601
