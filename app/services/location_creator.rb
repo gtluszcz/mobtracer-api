@@ -7,9 +7,8 @@ class LocationCreator
         new_location = create_basic_location(user, latitude, longitude)
 
         last_location = last_user_location(user)
-        if last_location.present? &&
-            get_distance(last_location, new_location) > MAX_ALLOWED_DISTANCE
-          new_location.update!(status: :invalid)
+        if last_location.present? && is_reachable?(last_location, new_location)
+          new_location.update!(status: :unreachable)
         end
         return new_location
       end
@@ -26,8 +25,8 @@ class LocationCreator
       return location
     end
 
-    def get_distance(last_location, new_location)
-      return 1
+    def is_reachable?(last_location, new_location)
+      return true
     end
 
     def last_user_location(user)

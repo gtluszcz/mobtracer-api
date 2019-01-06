@@ -1,6 +1,6 @@
 class LocationsController < ApplicationController
   def index
-    locations = Location.includes(:user).where(status: :valid).all
+    locations = Location.includes(:user).where(status: :reachable).all
     render json: LocationGrouper.every_5_seconds(locations: locations)
   end
 
@@ -9,9 +9,9 @@ class LocationsController < ApplicationController
   end
 
   def show
-    user = User.includes(:locations).where(status: :valid).find_by(identifier: params[:id])
-    if user.present?
-      render json: LocationGrouper.every_5_seconds(locations: user.locations)
+    locations = Location.includes(:user).where(status: :reachable, users: {identifier: params[:id]}).all
+    if locations.present?
+      render json: LocationGrouper.every_5_seconds(locations: locations)
     else
       render status: :bad_request
     end
