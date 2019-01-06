@@ -1,5 +1,5 @@
 class LocationSerializer < ActiveModel::Serializer
-  attributes :id,:user,:latitude,:longitude
+  attributes :id,:user,:latitude,:longitude,:status
 
   def user
     object.user.identifier
