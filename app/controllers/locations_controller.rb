@@ -1,7 +1,13 @@
 class LocationsController < ApplicationController
   def index
-    locations = Location.includes(:user).where(status: :reachable).all
-    render json: LocationGrouper.every_5_seconds(locations: locations)
+    locations = Location
+                    .joins(:user)
+                    .where(status: :reachable)
+                    .where('locations.created_at> ?',Time.now-24.hours)
+                    .order(created_at: :desc)
+                    .group_by(&:user_id)
+                    .map{|k,v| v.first}
+    render json: locations
   end
 
   def create
@@ -9,9 +15,10 @@ class LocationsController < ApplicationController
   end
 
   def show
-    locations = Location.includes(:user).where(status: :reachable, users: {identifier: params[:id]}).all
+    locations = Location.includes(:user).where(users: {identifier: params[:id]}).all
     if locations.present?
-      render json: LocationGrouper.every_5_seconds(locations: locations)
+      routes =  LocationGrouper.routes(locations: locations)
+      render json: routes.map{|el| ActiveModel::Serializer::CollectionSerializer.new(el)}
     else
       render status: :bad_request
     end

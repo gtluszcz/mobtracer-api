@@ -1,23 +1,17 @@
 class LocationGrouper
   class << self
-    def every_5_seconds(locations:)
-      split_locations_every_5_seconds(locations)
-    end
-
-    private
-
-    def beginnig_of_5seconds(t)
-      t.change(sec: t.sec - t.sec % 5)
-    end
-
-    def split_locations_every_5_seconds(locations)
-      splitted = {}
+    def routes(locations:)
+      routes=[]
+      counter = 0
       locations.each do |location|
-        time = beginnig_of_5seconds(location[:created_at]).iso8601
-        splitted[time] ||= []
-        splitted[time] << LocationSerializer.new(location).as_json
+        if location.reachable?
+          routes[counter] ||= []
+          routes[counter] << location
+        else
+          counter+=1 if routes[counter].present?
+        end
       end
-      splitted
+      routes
     end
   end
 end
